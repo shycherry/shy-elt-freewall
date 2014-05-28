@@ -6,38 +6,38 @@
 <polymer-element name="shy-elt-freewall">
   <template>
     <style type="text/css">
-
-    :host .item {
-      background: rgb(135, 199, 135);
-      width: 320px;
-      height: 320px;
-    }
-  </style>
-  <div id="container">
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-  </div>
+      :host .item {
+        background: rgb(135, 199, 135);
+        width: 320px;
+        height: 320px;
+        overflow: scroll;
+      }
+    </style>
+    <content id="content"></content>
+    <div id="container"></div>
   </template>
   <script>
     Polymer('shy-elt-freewall',{
       domReady : function(){        
+        var items = this.$.content.getDistributedNodes();
+        items.forEach(this.pushItem.bind(this));
+
         var self = this;
 
         $(function(){
           var wall = new freewall("#container");
           wall.reset({
             animate: true,
+            selector: '.item',
             onResize: function(){
               wall.refresh();
             }
           });
           wall.fitWidth();
-        })
+        });
+      },
+      pushItem : function(itemElt){
+        this.$.container.appendChild(itemElt);
       }
     });
   </script>

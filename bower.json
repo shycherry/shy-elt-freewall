@@ -1,0 +1,20 @@
+{
+  "name": "shy-elt-freewall",
+  "version": "0.0.1",
+  "homepage": "https://github.com/shycherry/shy-elt-freewall",
+  "authors": [
+    "shycherry <vinpowful@free.fr>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "latest",
+    "freewall": "https://raw.github.com/kombai/freewall/master/freewall.js"
+  }
+}

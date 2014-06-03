@@ -6,38 +6,64 @@
 <polymer-element name="shy-elt-freewall">
   <template>
     <style type="text/css">
-      :host .item {
-        background: rgb(135, 199, 135);
-        width: 320px;
-        height: 320px;
-        overflow: scroll;
+      :host {
+        /*height: 100%;
+        width: 100%;*/
+        position: relative;
       }
     </style>
     <content id="content"></content>
-    <div id="container"></div>
+    <!-- <div id="container"></div> -->
   </template>
   <script>
     Polymer('shy-elt-freewall',{
+      items : [],
       domReady : function(){        
         var items = this.$.content.getDistributedNodes();
-        items.forEach(this.pushItem.bind(this));
-
-        var self = this;
-
-        $(function(){
-          var wall = new freewall("#container");
-          wall.reset({
-            animate: true,
-            selector: '.item',
-            onResize: function(){
-              wall.refresh();
-            }
-          });
-          wall.fitWidth();
-        });
+        items.forEach(this.addItem.bind(this));
       },
-      pushItem : function(itemElt){
-        this.$.container.appendChild(itemElt);
+      addItem : function(itemElt){
+        if(!itemElt.style)
+            return;
+        this.appendChild(itemElt);
+        this.items.push(itemElt);
+        this.relayout();
+      },
+      relayout : function(){
+        var totalWidth = this.parentElement.clientWidth;
+        var totalHeight = this.parentElement.clientHeight;
+        var eltWidth = totalWidth;
+        var eltHeight = totalHeight;
+        var nbElts = this.items.length;
+        var nbRows = 1;
+        var nbCols = 1;
+
+        for(var iElt = 1; iElt<nbElts; iElt++){
+          if(eltWidth >= eltHeight){
+            nbCols++;
+            eltWidth = totalWidth / nbCols;
+          }else{
+            nbRows++;
+            eltHeight = totalHeight / nbRows;
+          }
+        }
+
+        var currentRow = 0;
+        var currentCol = 0;
+        for(var iElt = 0; iElt<nbElts; iElt++){
+          var currentElt = this.items[iElt];
+          currentElt.style.position = 'absolute';
+          currentElt.style.left = (currentCol * eltWidth) + 'px';
+          currentElt.style.top = (currentRow * eltHeight) + 'px';
+          currentElt.style.width = eltWidth+'px';
+          currentElt.style.height = eltHeight+'px';
+          currentElt.style.overflow = 'auto'
+
+          currentCol = (currentCol+1)%nbCols;
+          if(currentCol == 0)
+            currentRow = (currentRow+1)%nbRows;
+        }
+
       }
     });
   </script>

@@ -1,35 +1,35 @@
 <link rel="import" href="../polymer/polymer.html">
 <script type="text/javascript" src="../freewall/index.js"></script>
 <script type="text/javascript" src="../jquery/index.js"></script>
+<script type="text/javascript" src="../underscore/underscore.js"></script>
 
-<!-- events: statusChanged (enqueued, canceled, working, dropped, finished) -->
 <polymer-element name="shy-elt-freewall">
   <template>
     <style type="text/css">
       :host {
-        /*height: 100%;
-        width: 100%;*/
         position: relative;
       }
     </style>
     <content id="content"></content>
-    <!-- <div id="container"></div> -->
   </template>
   <script>
     Polymer('shy-elt-freewall',{
       items : [],
-      domReady : function(){        
-        var items = this.$.content.getDistributedNodes();
-        items.forEach(this.addItem.bind(this));
+      ready : function(){
+        this.lazyRelayout = _.debounce(this.relayout, 100).bind(this);
+        this.onMutation(this, this.childrenUpdated);
       },
-      addItem : function(itemElt){
-        if(!itemElt.style)
-            return;
-        this.appendChild(itemElt);
-        this.items.push(itemElt);
+      domReady : function(){
         this.relayout();
       },
+      childrenUpdated : function(observer, mutations){
+        this.lazyRelayout();
+        this.onMutation(this, this.childrenUpdated);
+      },      
       relayout : function(){
+        console.log('relayouting');
+        this.items = this.$.content.getDistributedNodes().filter(function(item){return item.style;});
+
         var totalWidth = this.parentElement.clientWidth;
         var totalHeight = this.parentElement.clientHeight;
         var eltWidth = totalWidth;

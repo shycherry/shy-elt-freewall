@@ -9,6 +9,9 @@
       :host {
         position: relative;
       }
+      :host > *{
+        opacity: 0;
+      }
     </style>
     <content id="content"></content>
   </template>
@@ -24,6 +27,7 @@
       },
       childrenUpdated : function(observer, mutations){
         this.lazyRelayout();
+        // this.relayout();
         this.onMutation(this, this.childrenUpdated);
       },      
       relayout : function(){
@@ -53,11 +57,14 @@
         for(var iElt = 0; iElt<nbElts; iElt++){
           var currentElt = this.items[iElt];
           currentElt.style.position = 'absolute';
+          currentElt.style.webkitTransitionProperty = 'opacity';
+          currentElt.style.webkitTransitionDuration = '0.1s';
           currentElt.style.left = (currentCol * eltWidth) + 'px';
           currentElt.style.top = (currentRow * eltHeight) + 'px';
           currentElt.style.width = eltWidth+'px';
           currentElt.style.height = eltHeight+'px';
-          currentElt.style.overflow = 'auto'
+          currentElt.style.overflow = 'auto';
+          currentElt.style.opacity = 1;
 
           currentCol = (currentCol+1)%nbCols;
           if(currentCol == 0)

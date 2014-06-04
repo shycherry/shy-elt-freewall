@@ -38,7 +38,7 @@
         var nbRows = 1;
         var nbCols = 1;
 
-        for(var iElt = 1; iElt<nbElts; iElt++){
+        while( (nbRows*nbCols)<nbElts ){
           if(eltWidth >= eltHeight){
             nbCols++;
             eltWidth = totalWidth / nbCols;

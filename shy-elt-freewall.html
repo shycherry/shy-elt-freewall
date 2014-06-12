@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
-<script type="text/javascript" src="../jquery/index.js"></script>
+<!-- <script type="text/javascript" src="../jquery/index.js"></script> -->
 <script type="text/javascript" src="../underscore/underscore.js"></script>
 
 <polymer-element name="shy-elt-freewall" attributes="transitionDuration">
@@ -7,6 +7,7 @@
     <style type="text/css">
       :host {
         position: relative !important;
+        overflow: hidden;
       }
       :host > *{
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
@@ -86,8 +87,9 @@
           currentElt.style.left = (currentCol * eltWidth) + 'px';
           currentElt.style.top = (currentRow * eltHeight) + 'px';
           
-          if( (iElt+1 == nbElts) && (nbElts%2 != 0) ){
-            currentElt.style.width = (2*eltWidth)+'px';
+          if( (iElt+1 == nbElts) ){
+            nbEltsMissing = (nbRows*nbCols) - nbElts ;
+            currentElt.style.width = ((1+nbEltsMissing)*eltWidth)+'px';
           }else{
             currentElt.style.width = eltWidth+'px';
           }          

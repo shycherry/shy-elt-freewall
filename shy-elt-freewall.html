@@ -2,7 +2,7 @@
 <!-- <script type="text/javascript" src="../jquery/index.js"></script> -->
 <script type="text/javascript" src="../underscore/underscore.js"></script>
 
-<polymer-element name="shy-elt-freewall" attributes="transitionDuration">
+<polymer-element name="shy-elt-freewall" attributes="transitionDuration withRelayoutingClass">
   <template>
     <style type="text/css">
       :host {
@@ -27,6 +27,7 @@
   <script>
     Polymer('shy-elt-freewall',{
       items : [],
+      withRelayoutingClass : false,
       ready : function(){
         this.startRelayout = this.startRelayout.bind(this);
         this.endRelayout = this.endRelayout.bind(this);
@@ -49,7 +50,9 @@
       endRelayout : function(){
         for(var iElt = 0; iElt<this.items.length; iElt++){
           var currentElt = this.items[iElt];
-          currentElt.classList.remove('relayouting');
+          
+          if(this.withRelayoutingClass)
+            currentElt.classList.remove('relayouting');
         }
       },
       startRelayout : function(){
@@ -85,7 +88,9 @@
         for(var iElt = 0; iElt<nbElts; iElt++){
           var currentElt = this.items[iElt];
 
-          currentElt.classList.add('relayouting');
+          if(this.withRelayoutingClass)
+            currentElt.classList.add('relayouting');
+          
           currentElt.style.webkitTransition = this.transitionDuration +'ms' || '0';
           currentElt.style.left = (currentCol * eltWidth) + 'px';
           currentElt.style.top = (currentRow * eltHeight) + 'px';

@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "polymer": "latest",
-    "underscore": "latest",
-    "jquery": "http://code.jquery.com/jquery-2.1.1.min.js"
+    "underscore": "latest"
   }
 }

@@ -57,7 +57,7 @@
       },
       startRelayout : function(){
         console.log('relayouting ');
-        this.items = this.$.content.getDistributedNodes().filter(function(item){return item.style;});
+        this.items = _.filter(this.$.content.getDistributedNodes(), function(item){return item.style;});
 
         var totalWidth = this.clientWidth;
         var totalHeight = this.clientHeight;

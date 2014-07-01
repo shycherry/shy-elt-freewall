@@ -1,8 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
-<!-- <script type="text/javascript" src="../jquery/index.js"></script> -->
 <script type="text/javascript" src="../underscore/underscore.js"></script>
 
-<polymer-element name="shy-elt-freewall" attributes="transitionDuration withRelayoutingClass">
+<!-- emits "relayout" -->
+<polymer-element name="shy-elt-freewall" attributes="delay transitionDuration withRelayoutingClass">
   <template>
     <style type="text/css">
       :host {
@@ -26,15 +26,27 @@
   <script>
     Polymer('shy-elt-freewall',{
       items : [],
+      transitionDuration : 0,
+      delay : 0,
       withRelayoutingClass : false,
       ready : function(){
+        
         this.startRelayout = this.startRelayout.bind(this);
-        this.endRelayout = this.endRelayout.bind(this);
-        this.lazyEndRelayout = _.debounce(this.endRelayout, this.transitionDuration);
+        
+        if(this.transitionDuration)
+          this.endRelayout = _.debounce(this.endRelayout, this.transitionDuration).bind(this);
+        else
+          this.endRelayout = this.endRelayout.bind(this);
+        
+        if(this.delay)
+          this.startRelayout = _.debounce(this.startRelayout, this.delay).bind(this);
+        else
+          this.startRelayout = this.startRelayout.bind(this);
+
         this.onMutation(this, this.childrenUpdated);
       },
       attached : function(){
-        window.addEventListener('resize', this.startRelayout);
+        window.addEventListener('resize', this.startRelayout)
       },
       detached : function(){
         window.removeEventListener('resize', this.startRelayout);
@@ -47,16 +59,27 @@
         this.onMutation(this, this.childrenUpdated);
       },
       endRelayout : function(){
+        console.log('endRelayout');
+        if(!this.items)
+          return;
+
         for(var iElt = 0; iElt<this.items.length; iElt++){
           var currentElt = this.items[iElt];
           
           if(this.withRelayoutingClass)
             currentElt.classList.remove('relayouting');
         }
+        
+        this.fire('relayout');
+        var self = this;
+        setTimeout(function(){self.fire('relayoutBis')},this.transitionDuration);
       },
       startRelayout : function(){
         console.log('relayouting ');
         this.items = _.filter(this.$.content.getDistributedNodes(), function(item){return item.style;});
+
+        if(!this.items)
+          return;
 
         var totalWidth = this.clientWidth;
         var totalHeight = this.clientHeight;
@@ -107,8 +130,7 @@
             currentRow = (currentRow+1)%nbRows;
         }
 
-        this.lazyEndRelayout();
-
+        this.endRelayout();
       }
     });
   </script>

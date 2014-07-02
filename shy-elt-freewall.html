@@ -113,7 +113,9 @@
           if(this.withRelayoutingClass)
             currentElt.classList.add('relayouting');
           
-          currentElt.style.webkitTransition = this.transitionDuration +'ms' || '0';
+          if(this.transitionDuration)
+            currentElt.style.webkitTransition = this.transitionDuration +'ms' || '0';
+          
           currentElt.style.left = (currentCol * eltWidth) + 'px';
           currentElt.style.top = (currentRow * eltHeight) + 'px';
           

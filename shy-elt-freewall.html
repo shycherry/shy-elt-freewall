@@ -2,7 +2,7 @@
 <script type="text/javascript" src="../underscore/underscore.js"></script>
 
 <!-- emits "relayout" -->
-<polymer-element name="shy-elt-freewall" attributes="delay transitionDuration withRelayoutingClass">
+<polymer-element name="shy-elt-freewall" attributes="delay margin transitionDuration withRelayoutingClass">
   <template>
     <style type="text/css">
       :host {
@@ -29,15 +29,16 @@
       transitionDuration : 0,
       delay : 0,
       withRelayoutingClass : false,
+      margin : 0,
       ready : function(){
-        
+
         this.startRelayout = this.startRelayout.bind(this);
-        
+
         if(this.transitionDuration)
           this.endRelayout = _.debounce(this.endRelayout, this.transitionDuration).bind(this);
         else
           this.endRelayout = this.endRelayout.bind(this);
-        
+
         if(this.delay)
           this.startRelayout = _.debounce(this.startRelayout, this.delay).bind(this);
         else
@@ -65,11 +66,11 @@
 
         for(var iElt = 0; iElt<this.items.length; iElt++){
           var currentElt = this.items[iElt];
-          
+
           if(this.withRelayoutingClass)
             currentElt.classList.remove('relayouting');
         }
-        
+
         this.fire('relayout');
         var self = this;
         setTimeout(function(){self.fire('relayoutBis')},this.transitionDuration);
@@ -81,8 +82,8 @@
         if(!this.items)
           return;
 
-        var totalWidth = this.clientWidth;
-        var totalHeight = this.clientHeight;
+        var totalWidth = this.clientWidth - (this.margin*2);
+        var totalHeight = this.clientHeight - (this.margin*2);
         var eltWidth = totalWidth;
         var eltHeight = totalHeight;
         var nbElts = this.items.length;
@@ -92,14 +93,16 @@
         while( (nbRows*nbCols)<nbElts ){
           if( ((nbCols+1) * nbRows > nbElts) && (nbCols+1)%nbElts != 0 ){
             nbRows++;
+            totalHeight -= this.margin;
           }else if (((nbRows+1) * nbCols > nbElts) && (nbRows+1)%nbElts != 0 ){
             nbCols++;
-          }else if(eltWidth >= eltHeight){            
+            totalWidth -= this.margin;
+          }else if(eltWidth >= eltHeight){
             nbCols++;
-            // eltWidth = totalWidth / nbCols;
+            totalWidth -= this.margin;
           }else{
             nbRows++;
-            // eltHeight = totalHeight / nbRows;
+            totalHeight -= this.margin;
           }
           eltWidth = totalWidth / nbCols;
           eltHeight = totalHeight / nbRows;
@@ -107,24 +110,26 @@
 
         var currentRow = 0;
         var currentCol = 0;
+        var isLastElt = false;
         for(var iElt = 0; iElt<nbElts; iElt++){
           var currentElt = this.items[iElt];
+          var isLastElt = (iElt+1 == nbElts);
 
           if(this.withRelayoutingClass)
             currentElt.classList.add('relayouting');
-          
+
           if(this.transitionDuration)
             currentElt.style.webkitTransition = this.transitionDuration +'ms' || '0';
-          
-          currentElt.style.left = (currentCol * eltWidth) + 'px';
-          currentElt.style.top = (currentRow * eltHeight) + 'px';
-          
-          if( (iElt+1 == nbElts) ){
+
+          currentElt.style.left = ( (this.margin*(currentCol+1)) + (currentCol * eltWidth) ) + 'px';
+          currentElt.style.top = ( (this.margin*(currentRow+1)) + (currentRow * eltHeight) ) + 'px';
+
+          if( isLastElt ){
             nbEltsMissing = (nbRows*nbCols) - nbElts ;
-            currentElt.style.width = ((1+nbEltsMissing)*eltWidth)+'px';
+            currentElt.style.width = ( (nbEltsMissing * this.margin) + ((1+nbEltsMissing)*eltWidth) ) +'px';
           }else{
             currentElt.style.width = eltWidth+'px';
-          }          
+          }
           currentElt.style.height = eltHeight+'px';
 
           currentCol = (currentCol+1)%nbCols;

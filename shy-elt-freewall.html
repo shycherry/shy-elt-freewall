@@ -33,30 +33,29 @@
       ready : function(){
 
         this.startRelayout = this.startRelayout.bind(this);
+        this.endRelayout = this.endRelayout.bind(this);
 
         if(this.transitionDuration)
-          this.endRelayout = _.debounce(this.endRelayout, this.transitionDuration).bind(this);
-        else
-          this.endRelayout = this.endRelayout.bind(this);
+          this.endRelayout = _.debounce(this.endRelayout, this.transitionDuration);
 
         if(this.delay)
-          this.startRelayout = _.debounce(this.startRelayout, this.delay).bind(this);
-        else
-          this.startRelayout = this.startRelayout.bind(this);
+          this.startRelayout = _.debounce(this.startRelayout, this.delay);
 
         this.onMutation(this, this.childrenUpdated);
       },
       attached : function(){
-        window.addEventListener('resize', this.startRelayout)
+        window.addEventListener('resize', this.startRelayout);
+        this.addEventListener('webkitTransitionEnd', this.endRelayout, false);
       },
       detached : function(){
         window.removeEventListener('resize', this.startRelayout);
+        this.removeEventListener('webkitTransitionEnd', this.endRelayout, false);
       },
       domReady : function(){
-        this.startRelayout();
+        this.async(this.startRelayout);
       },
       childrenUpdated : function(observer, mutations){
-        this.startRelayout();
+        this.async(this.startRelayout);
         this.onMutation(this, this.childrenUpdated);
       },
       endRelayout : function(){
@@ -64,16 +63,14 @@
         if(!this.items)
           return;
 
-        for(var iElt = 0; iElt<this.items.length; iElt++){
-          var currentElt = this.items[iElt];
-
-          if(this.withRelayoutingClass)
+        if(this.withRelayoutingClass){
+          for(var iElt = 0; iElt<this.items.length; iElt++){
+            var currentElt = this.items[iElt];
             currentElt.classList.remove('relayouting');
+          }
         }
 
-        this.fire('relayout');
-        var self = this;
-        setTimeout(function(){self.fire('relayoutBis')},this.transitionDuration);
+        this.asyncFire('relayout');
       },
       startRelayout : function(){
         console.log('relayouting ');
@@ -135,9 +132,10 @@
           currentCol = (currentCol+1)%nbCols;
           if(currentCol == 0)
             currentRow = (currentRow+1)%nbRows;
-        }
 
-        this.endRelayout();
+          if(!this.transitionDuration)
+            this.endRelayout();
+        }
       }
     });
   </script>

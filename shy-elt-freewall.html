@@ -46,8 +46,7 @@
       if(this.delay)
         this.startRelayout = _.debounce(this.startRelayout, this.delay);
 
-      // this.onMutation(this, this.childrenUpdated);
-      new MutationObserver(this.childrenUpdated.bind(this)).observe(this, {childList: true});
+      // new MutationObserver(this.childrenUpdated.bind(this)).observe(this, {childList: true});
       this.childrenUpdated();
     },
     attached : function(){
@@ -58,11 +57,8 @@
       window.removeEventListener('resize', this.startRelayout);
       this.removeEventListener('webkitTransitionEnd', this.endRelayout, false);
     },
-    domReady : function(){
-      this.async(this.startRelayout);
-    },
     childrenUpdated : function(observer, mutations){
-      this.async(this.startRelayout);
+      requestAnimationFrame(this.startRelayout);
     },
     endRelayout : function(){
       console.log('endRelayout');
@@ -80,7 +76,6 @@
     },
     startRelayout : function(){
       console.log('relayouting ');
-      Polymer.dom.flush();
 
       this.items = _.filter(Polymer.dom(this.$.content).getDistributedNodes(), function(item){return item.style;});
 
@@ -140,10 +135,10 @@
         currentCol = (currentCol+1)%nbCols;
         if(currentCol == 0)
           currentRow = (currentRow+1)%nbRows;
-
-        if(!this.transitionDuration)
-          this.endRelayout();
       }
+
+      if(!this.transitionDuration)
+        this.endRelayout();
     }
   });
 </script>

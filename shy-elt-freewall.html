@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+
 <script type="text/javascript" src="../underscore/underscore.js"></script>
 
 <!-- emits "relayout" -->
@@ -28,6 +30,7 @@
 <script>
   Polymer({
     is: "shy-elt-freewall",
+    behaviors: [Polymer.IronResizableBehavior],
     properties: {
       delay: {type: Number, value:0},
       margin: {type: Number, value:0},
@@ -47,14 +50,14 @@
         this.startRelayout = _.debounce(this.startRelayout, this.delay);
 
       // new MutationObserver(this.childrenUpdated.bind(this)).observe(this, {childList: true});
-      this.childrenUpdated();
     },
     attached : function(){
-      window.addEventListener('resize', this.startRelayout);
+      this.addEventListener("iron-resize", this.startRelayout);
       this.addEventListener('webkitTransitionEnd', this.endRelayout, false);
+      this.childrenUpdated();
     },
     detached : function(){
-      window.removeEventListener('resize', this.startRelayout);
+      this.addEventListener("iron-resize", this.startRelayout);
       this.removeEventListener('webkitTransitionEnd', this.endRelayout, false);
     },
     childrenUpdated : function(observer, mutations){

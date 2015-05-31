@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "polymer": "~1.0.2",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#1.0.0"
   }
 }

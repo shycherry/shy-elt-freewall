@@ -13,7 +13,7 @@
       height: 100%;
       overflow: hidden;
     }
-    ::content > *{
+    #wrapper > ::content > *{
       position: absolute !important;
       overflow: auto;
     }
@@ -23,7 +23,9 @@
     }
   </style>
   <template>
-    <content id="content"></content>
+    <div id="wrapper">
+      <content id="content"></content>
+    </div>
   </template>
 </dom-module>
 

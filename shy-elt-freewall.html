@@ -59,7 +59,7 @@
       this.childrenUpdated();
     },
     detached : function(){
-      this.addEventListener("iron-resize", this.startRelayout);
+      this.removeEventListener("iron-resize", this.startRelayout);
       this.removeEventListener('webkitTransitionEnd', this.endRelayout, false);
     },
     childrenUpdated : function(observer, mutations){

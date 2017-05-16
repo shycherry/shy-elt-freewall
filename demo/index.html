@@ -15,8 +15,19 @@
   </head>
   <body>
     <p>An example of <code>&lt;shy-elt-freewall&gt;</code>:</p>
+<!--       <shy-elt-freewall transition-duration="1000" with-relayouting-class>
+        <div id="blue"></div>
+        <div id="white"></div>
+        <div id="red"></div>
+      </shy-elt-freewall>
+ -->
+
     <shy-elt-freewall>
-      <div id="blue"></div>
+      <shy-elt-freewall transition-duration="1000" with-relayouting-class>
+        <div id="blue"></div>
+        <div id="white"></div>
+        <div id="red"></div>
+      </shy-elt-freewall>
       <div id="white"></div>
       <div id="red"></div>
     </shy-elt-freewall>

@@ -17,7 +17,7 @@
       position: absolute !important;
       overflow: auto;
     }
-    :host > .relayouting{
+    #wrapper > ::content > .relayouting{
       -webkit-transition: opacity 0s;
       opacity: 0.5;
     }
@@ -41,7 +41,6 @@
     },
     items : [],
     ready : function(){
-
       this.startRelayout = this.startRelayout.bind(this);
       this.endRelayout = this.endRelayout.bind(this);
 
@@ -50,8 +49,6 @@
 
       if(this.delay)
         this.startRelayout = _.debounce(this.startRelayout, this.delay);
-
-      // new MutationObserver(this.childrenUpdated.bind(this)).observe(this, {childList: true});
     },
     attached : function(){
       this.addEventListener("iron-resize", this.startRelayout);
@@ -65,10 +62,12 @@
     childrenUpdated : function(observer, mutations){
       requestAnimationFrame(this.startRelayout);
     },
-    endRelayout : function(){
-      console.log('endRelayout');
-      if(!this.items)
+    endRelayout : function(event){
+      if((event && event.propertyName !== "width" && event.propertyName !== "height") || !this.items)
+      {
+        event.stopPropagation();
         return;
+      }
 
       if(this.withRelayoutingClass){
         for(var iElt = 0; iElt<this.items.length; iElt++){
@@ -77,12 +76,19 @@
         }
       }
 
-      this.fire('relayout');
+      this._notifying = true;
       this.notifyResize();
-    },
-    startRelayout : function(){
-      console.log('relayouting ');
+      this._notifying = false;
 
+      this.fire('relayout');
+    },
+    startRelayout : function(event){
+
+      if(this._notifying){
+        event.stopPropagation();
+        return;
+      }
+      
       this.items = _.filter(Polymer.dom(this.$.content).getDistributedNodes(), function(item){return item.style;});
 
       if(!this.items)
